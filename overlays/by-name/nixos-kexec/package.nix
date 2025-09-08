@@ -2,6 +2,7 @@
   coreutils-full,
   fzf,
   jq,
+  argc,
   kexec-tools,
   lib,
   writeArgcShellApplication,
@@ -11,6 +12,7 @@ writeArgcShellApplication {
   name = "nixos-kexec";
 
   runtimeInputs = [
+    argc
     coreutils-full
     jq
     fzf
