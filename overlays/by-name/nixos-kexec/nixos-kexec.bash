@@ -1,5 +1,3 @@
-# shellcheck shell=bash
-
 declare kexec_jq argc_append argc_config
 
 # @option --append   Extra kernel parameters to append to the declared NixOS config kernel parameter
@@ -13,7 +11,23 @@ eval "$(argc --argc-eval "$0" "$@")"
 choice=${argc_config:-}
 
 if [[ -z $choice ]]; then
-	choice=$(find /nix/var/nix/profiles -name 'system-*' | tac | fzf --select-1)
+        IFS=$'\r\n' generations=($(find /nix/var/nix/profiles -name 'system-*' | cut -d'-' -f 2 | sort))
+        for ((i = 0; i < ${#generations[*]}; ++i)); do
+          kernel=$(jq -r '."org.nixos.bootspec.v1".label' "/nix/var/nix/profiles/system-${generations[$i]}-link/boot.json")
+          generations[i]="Generation ${generations[$i]} $kernel"
+        done
+
+        gen_selected=$(printf '%s\n' "${generations[@]}" | fzf --select-1 \
+              --accept-nth 2 \
+              --reverse \
+              --tac \
+              --header='NixOS kexec Menu' \
+              --header-first \
+              --header-border=bold \
+              --info=hidden \
+              --color='hl:65,fg:252,header:65,fg+:252' \
+              --color='pointer:100,marker:100,prompt:110,hl+:108')
+        choice="/nix/var/nix/profiles/system-${gen_selected}-link/boot.json"
 fi
 
 if [[ -z $choice ]]; then
