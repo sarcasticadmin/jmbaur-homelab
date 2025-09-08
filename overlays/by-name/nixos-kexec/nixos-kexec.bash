@@ -40,6 +40,11 @@ if [[ -n ${argc_append:-} ]]; then
 	argc_append=" ${argc_append}"
 fi
 
+if [[ $(id -u) -ne 0 ]]; then
+        echo "[ERROR] run nixos-kexec as root or with sudo"
+        exit 1
+fi
+
 eval "$(jq --raw-output --arg append "${argc_append:-}" --from-file "$kexec_jq" <"${choice}/boot.json")"
 
 systemctl kexec
