@@ -2,7 +2,7 @@
   description = "NixOS configurations for the homelab";
 
   inputs = {
-    nixpkgs.url = "github:jmbaur/nixpkgs/jmbaur-nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     git-hooks.url = "github:cachix/git-hooks.nix";
     home-manager.url = "github:nix-community/home-manager";
